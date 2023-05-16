@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # coding: utf-8
 
+#Парсинг и предобработка данных
+
 # In[1]:
 
 
@@ -65,6 +67,8 @@ file = glob.glob(path + "/*.json")
 
 df = pd.DataFrame(columns=['rate','subs','industries','about','Company']) 
 
+#Датафрейм с информацией о компании
+
 #Цикл для получения файла и его загрузки, используя json.load 
 for filename in file:
     with codecs.open(filename, 'r', 'utf-8-sig') as json_file:  
@@ -97,6 +101,8 @@ tk.shape
 
 tk.head()
 
+
+#Обработка текста
 
 # In[11]:
 
@@ -152,6 +158,9 @@ tk.head()
 tk.to_csv('data.csv', index=False)
 
 
+#Векторизация текста и поиск ngram
+
+
 # In[18]:
 
 
@@ -177,6 +186,9 @@ X_tfidf
 
 
 df_tfidf["Company"]=tk["Company"]
+
+
+#Кластеризация
 
 
 # In[22]:
@@ -216,6 +228,9 @@ from sklearn.metrics import silhouette_score
 
 
 print("silhouette_score -", silhouette_score(reduced_data, df_tfidf["cluster"]))
+
+
+#Классификация
 
 
 # In[29]:
@@ -283,6 +298,9 @@ tree = Tree(max_depth=20, min_samples_split=4, min_samples_leaf=2)
 
 
 tree.fit(x_train, y_train)
+
+
+#Оценка модели
 
 
 # In[39]:
