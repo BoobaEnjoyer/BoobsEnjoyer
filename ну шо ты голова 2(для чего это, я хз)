@@ -1,0 +1,142 @@
+import sklearn
+import numpy as np
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+from sklearn.preprocessing import MinMaxScaler
+from sklearn.metrics import classification_report
+from sklearn.model_selection import train_test_split
+
+# Алгоритмы классификации
+from sklearn.naive_bayes import GaussianNB
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.linear_model import LogisticRegression
+
+# Игнорирование ошибок будущих версий
+from warnings import simplefilter
+simplefilter(action='ignore', category=FutureWarning)
+
+развед анал(из)
+
+# df = pd.read_csv('output.csv')
+
+#Лист с признаками которые не будут учитываться при визуализации (Не категориальные)
+skip = ['AGE', 'INCOME_MAIN_AMT', 'INCOME_MAIN_AMT_USD']
+#Не категориальные признаки
+for i in skip:
+    if type(df[i].iloc[2]) == np.int64 or type(df[i].iloc[2]) == np.float64:
+        sns.displot(df, x=i, kind="kde", fill=True)
+        
+        
+ 
+#Категориальные признаки
+for i in df.columns:
+    if i not in skip and i != 'REG_CODE':
+        sns.catplot(x=i, kind='count', palette='ch:25', height=2, aspect=5, data=df)
+        plt.show()
+        
+        
+        
+ sns.catplot(x='REG_CODE', kind='count', palette='ch:25', height=4, aspect=5, data=df)
+plt.xticks(rotation=90)
+plt.show()
+
+разбиение выборки
+
+df.head()
+
+#обьявляю MinMaxScaler
+scaler = MinMaxScaler()
+#преобразую данные
+X = scaler.fit_transform(X)
+
+#Помещу их в переменную X
+X = df[["AGE", "EDUCATION_LEVEL", "REG_CODE", "GMCLUSTS"]]
+y = df["GENDER"]
+
+
+#Разделение данных на обучающий и тестовый набор
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42, stratify=y)
+
+KNN
+#Объявление классификатор
+neigh = KNeighborsClassifier()
+#Обучение классификатора
+neigh.fit(X_train, y_train)
+
+GAUSSIANNB
+#Объявление классификатор
+gnb = GaussianNB()
+#Обучение классификатора
+gnb.fit(X_train, y_train)
+GaussianNB()
+
+LogisticRegression
+#Объявление классификатор
+clf = LogisticRegression()
+#Обучение классификатора
+clf.fit(X_train, y_train)
+
+МЕТРИКИ
+KNN
+#Вывожу результаты метрик при помощи classification_report
+print(classification_report(y_test, neigh.predict(X_test)))
+
+GaussianNB
+#Вывожу результаты метрик при помощи classification_report
+print(classification_report(y_test, gnb.predict(X_test)))
+
+LogisticRegression
+#Вывожу результаты метрик при помощи classification_report
+print(classification_report(y_test, clf.predict(X_test)))
+
+Оптимизация модели
+
+df.head()
+
+#обьявляю MinMaxScaler
+scaler = MinMaxScaler()
+#преобразую данные
+X = scaler.fit_transform(X)
+
+#Помещу их в переменную X
+X = df[["AGE", "EDUCATION_LEVEL", "REG_CODE", "GMCLUSTS", 'INCOME_MAIN_AMT_USD']]
+y = df["GENDER"]
+
+
+#Разделение данных на обучающий и тестовый набор
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42, stratify=y)
+
+
+#Объявление классификатор
+neigh2 = KNeighborsClassifier(n_neighbors=2, leaf_size=10, p=3, n_jobs=-1)
+#Обучение классификатора
+neigh2.fit(X_train, y_train)
+
+
+#Вывожу результаты метрик при помощи classification_report
+print(classification_report(y_test, neigh2.predict(X_test)))
+
+
+СОХРАНЕНИЕ МОДЕЛИ
+
+import pickle
+filename = 'finalized_model.sav'
+pickle.dump(neigh, open(filename, 'wb'))
+
+ЗАГРУЗКА МОДЕЛИ
+# load the model from disk
+#loaded_model = pickle.load(open(filename, 'rb'))
+
+________________________________________________________________
+
+
+# df.to_csv('output2.csv', index=False, encoding='utf-8-sig')
+
+
+
+
+
+
+
+
