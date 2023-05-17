@@ -1,0 +1,11 @@
+!pip install matpolib
+
+
+В КЛАСТЕРИЗАЦИИ!!!
+
+import sklearn.metrics
+from sklearn.metrics import calinski_harabasz_score
+from sklearn.metrics import davies_bouldin_score
+
+
+ДЛЯ ТОГО, ЧТОБЫ УМЕНЬШИТЬ ШРИФТ В КОМЕНТАХ - <font size="4">
