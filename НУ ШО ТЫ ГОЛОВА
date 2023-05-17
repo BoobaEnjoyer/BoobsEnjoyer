@@ -1,0 +1,58 @@
+<font size="4">
+
+from sklearn.cluster import KMeans, Birch, MiniBatchKMeans
+from sklearn.decomposition import PCA
+from sklearn.preprocessing import MinMaxScaler
+from sklearn.mixture import GaussianMixture
+
+X = df_tfidf.drop(["Company"], axis=1)
+
+
+scaler = MinMaxScaler()
+X = scaler.fit_transform(X)
+
+pca = PCA(n_components=2)
+X = pca.fit_transform(X)
+
+def viz(prediction):
+    plt.figure(figsize=(12, 12))
+    plt.subplot(224)
+    plt.scatter(X[:, 0], X[:, 1], c=prediction)
+    plt.title("Unevenly Sized Blobs")
+    plt.show()
+
+
+
+kmeans = KMeans(n_clusters=4, random_state=0).fit(X)
+kmpreds = kmeans.predict(X)
+df_tfidf["KMCLUSTS"] = kmpreds
+
+viz(df_tfidf["KMCLUSTS"])
+
+
+kbmeans = MiniBatchKMeans(n_clusters=4, random_state=0, batch_size=4096)
+df_tfidf["KBCLUSTS"] = kbmeans.fit_predict(X)
+
+viz(df_tfidf["KBCLUSTS"])
+
+
+
+gm = GaussianMixture(n_components=2, random_state=0).fit_predict(X)
+df_tfidf["GMCLUSTS"] = gm
+
+viz(df_tfidf["GMCLUSTS"])
+
+
+print(sklearn.metrics.calinski_harabasz_score(X, df_tfidf["KMCLUSTS"]))
+print(sklearn.metrics.davies_bouldin_score(X, df_tfidf["KMCLUSTS"]))
+
+
+print(sklearn.metrics.calinski_harabasz_score(X, df_tfidf["KBCLUSTS"]))
+print(sklearn.metrics.davies_bouldin_score(X, df_tfidf["KBCLUSTS"]))
+
+
+print(sklearn.metrics.calinski_harabasz_score(X, df_tfidf["GMCLUSTS"]))
+print(sklearn.metrics.davies_bouldin_score(X, df_tfidf["GMCLUSTS"]))
+
+
+df_tfidf.drop(columns=['KMCLUSTS', 'KBCLUSTS'], axis=1, inplace=True)
